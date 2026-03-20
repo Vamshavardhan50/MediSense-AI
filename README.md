@@ -290,8 +290,8 @@ MIT License
 ## 📞 Contact
 
 - 🌐 Demo: https://medisense-ai-113931364052.us-west1.run.app
-- 📧 Email: your-email@example.com
-- 🐙 GitHub: https://github.com/yourusername/medisense-ai
+- 📧 Email: chintha.vamshavardhan50@gmail.com
+- 🐙 GitHub: https://github.com/Vamshavardhan50/MediSense-AI/
 
 ---
 
