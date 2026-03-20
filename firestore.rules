@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['name', 'bloodType']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.bloodType is string && data.bloodType.size() > 0 && data.bloodType.size() < 20 &&
+             (!('emergencyContact' in data) || (data.emergencyContact is string && data.emergencyContact.size() < 100)) &&
+             (!('emergencyPhone' in data) || (data.emergencyPhone is string && data.emergencyPhone.size() < 20)) &&
+             (!('conditions' in data) || (data.conditions is list && data.conditions.size() < 50)) &&
+             (!('allergies' in data) || (data.allergies is list && data.allergies.size() < 50));
+    }
+    function isValidMedication(data) {
+      return data.keys().hasAll(['name']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             (!('dosage' in data) || (data.dosage is string && data.dosage.size() < 100)) &&
+             (!('frequency' in data) || (data.frequency is string && data.frequency.size() < 100)) &&
+             (!('instructions' in data) || (data.instructions is string && data.instructions.size() < 500)) &&
+             (!('addedAt' in data) || (data.addedAt is string && data.addedAt.size() < 50));
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      
+      match /medications/{medId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidMedication(request.resource.data);
+        allow update: if isOwner(userId) && isValidMedication(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /family/{memberId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId); // Simplified for now, could add isValidFamilyMember
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

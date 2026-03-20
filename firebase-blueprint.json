@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Core user information for medical records",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "bloodType": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "emergencyPhone": { "type": "string" },
+        "conditions": { "type": "array", "items": { "type": "string" } },
+        "allergies": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "bloodType"]
+    },
+    "Medication": {
+      "title": "Medication",
+      "description": "Prescribed or OTC medication",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "dosage": { "type": "string" },
+        "frequency": { "type": "string" },
+        "instructions": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "FamilyMember": {
+      "title": "Family Member",
+      "description": "Information about a family member managed by the user",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "relation": { "type": "string" },
+        "bloodType": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "emergencyPhone": { "type": "string" },
+        "conditions": { "type": "array", "items": { "type": "string" } },
+        "allergies": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "relation"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User's main profile"
+    },
+    "/users/{userId}/medications/{medId}": {
+      "schema": "Medication",
+      "description": "User's medication list"
+    },
+    "/users/{userId}/family/{memberId}": {
+      "schema": "FamilyMember",
+      "description": "User's family members"
+    }
+  }
+}

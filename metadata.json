@@ -1,0 +1,8 @@
+{
+  "name": "MediSense AI",
+  "description": "An AI-powered medical companion designed for elderly accessibility and emergency preparedness. Features include prescription scanning, symptom triage, and emergency QR cards.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
