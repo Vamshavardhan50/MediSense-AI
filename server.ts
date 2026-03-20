@@ -12,8 +12,11 @@ async function startServer() {
 
   app.use(express.json({ limit: '10mb' }));
 
-  // Gemini AI Setup
-  const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+  const apiKey = process.env.GEMINI_API_KEY2 || process.env.GEMINI_API_KEY || process.env.API_KEY || "";
+  if (!apiKey) {
+    console.warn("WARNING: No Gemini API key found in environment variables (GEMINI_API_KEY2, GEMINI_API_KEY, or API_KEY).");
+  }
+  const genAI = new GoogleGenAI({ apiKey });
 
   // API Routes
   app.post("/api/ai/analyze-prescription", async (req, res) => {
@@ -75,7 +78,10 @@ async function startServer() {
 
   app.post("/api/ai/interactions", async (req, res) => {
     try {
-      const { medications } = req.body;
+      const medications = Array.isArray(req.body.medications) ? req.body.medications : [];
+      if (medications.length === 0) {
+        return res.json({ interactions: [], overall_risk: "NONE" });
+      }
 
       const prompt = `Check for drug interactions among these medications: ${medications.join(", ")}.
       Return ONLY a JSON object with this structure:

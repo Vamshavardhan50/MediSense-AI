@@ -275,7 +275,8 @@ export default function App() {
         const data = await res.json();
         
         if (type === "prescription") {
-          for (const med of data.medications) {
+          const medications = Array.isArray(data.medications) ? data.medications : [];
+          for (const med of medications) {
             await addDoc(collection(db, "users", user.uid, "medications"), {
               ...med,
               addedAt: new Date().toISOString()
@@ -315,7 +316,8 @@ export default function App() {
       await setDoc(doc(db, "users", user.uid), updatedProfile).catch(e => handleFirestoreError(e, OperationType.WRITE, `users/${user.uid}`));
 
       // Add medications
-      for (const med of (data.medications || [])) {
+      const medicationsToProcess = Array.isArray(data.medications) ? data.medications : [];
+      for (const med of medicationsToProcess) {
         await addDoc(collection(db, "users", user.uid, "medications"), {
           ...med,
           instructions: "Added via voice history",
